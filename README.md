@@ -4,6 +4,7 @@ Personal API for todos, notes and etc creating.
 
 - Creation +
 - All notes getting +
+- Get by id -
 
 #Todos
 
@@ -11,6 +12,15 @@ Personal API for todos, notes and etc creating.
 - Deleting +
 - All todos getting +
 - Completing +
+- Getting all +
+- Get by id -
 
-#Bookshelf -
+#Bookshelf
+
+- Creation +- (Images in progress)
+- Delete +
+- Getting all +
+- Update +
+- Getting by id -
+
 #Movies -
