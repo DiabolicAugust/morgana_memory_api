@@ -15,9 +15,7 @@ app.use('/todos', todosRouter);
 
 const start = async () => {
   try {
-    await mongoose.connect(
-      'mongodb+srv://morgana:morgana@test.9vvdzqc.mongodb.net/?retryWrites=true&w=majority'
-    );
+    await mongoose.connect(process.env.MONGO_URL);
     app.listen(PORT, () => console.log('\x1b[31 m Server started! \x1b[0m'));
   } catch (error) {
     console.log(error);
