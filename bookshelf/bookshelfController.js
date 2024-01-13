@@ -1,4 +1,5 @@
 import Book from "../models/Book.js";
+import { errorHandlingService } from "../service/errorService.js";
 import { deleteImage, uploadRequestImage } from "../service/imageService.js";
 import mongoose from "mongoose";
 
@@ -30,21 +31,7 @@ class bookshelfController {
         book: book,
       });
     } catch (error) {
-      if (error instanceof mongoose.Error.ValidationError) {
-        const customError = Object.values(error.errors).map((err) => {
-          return { message: err.message };
-        });
-
-        return res.status(400).json({
-          message: customError,
-        });
-      }
-
-      // Handle other types of errors here
-      console.error(error);
-      return res.status(400).json({
-        message: error.message,
-      });
+      errorHandlingService(error, res);
     }
   }
 
@@ -70,11 +57,7 @@ class bookshelfController {
         message: "Book has been deleted successfully!",
       });
     } catch (error) {
-      console.log(error);
-      return res.status(400).json({
-        message: "Error while creating todo",
-        error: error,
-      });
+      errorHandlingService(error, res);
     }
   }
 
@@ -129,10 +112,7 @@ class bookshelfController {
         book: updatedBook,
       });
     } catch (error) {
-      console.error(error);
-      res.status(400).json({
-        message: error.message,
-      });
+      errorHandlingService(error, res);
     }
   }
 
@@ -164,9 +144,7 @@ class bookshelfController {
         book: book,
       });
     } catch (error) {
-      res.status(400).json({
-        message: error.message,
-      });
+      errorHandlingService(error, res);
     }
   }
 }
