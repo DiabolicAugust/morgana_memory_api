@@ -4,6 +4,7 @@ import notesRouter from "./notes/notesRouter.js";
 import todosRouter from "./todos/todosRouter.js";
 import bookshelfRouter from "./bookshelf/bookshelfRouter.js";
 import dotenv from "dotenv";
+import imagesRouter from "./images/imagesRouter.js";
 
 dotenv.config();
 const PORT = process.env.PORT || 5000;
@@ -14,6 +15,7 @@ app.use(express.json());
 app.use("/notes", notesRouter);
 app.use("/todos", todosRouter);
 app.use("/books", bookshelfRouter);
+app.use("/api/image", imagesRouter);
 
 const start = async () => {
   try {

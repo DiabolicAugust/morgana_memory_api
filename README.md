@@ -17,10 +17,10 @@ Personal API for todos, notes and etc creating.
 
 #Bookshelf
 
-- Creation +
-- Delete +
+- Creation + (image upload +)
+- Delete + (images are deleting +)
 - Getting all +
-- Update +
+- Update + (old images are deleting +)
 - Getting by id +
 
 #Movies -
