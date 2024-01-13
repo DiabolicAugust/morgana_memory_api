@@ -1,4 +1,4 @@
-import Todo from '../models/Todo.js';
+import Todo from "../models/Todo.js";
 
 class todosController {
   async addTodo(req, res) {
@@ -7,7 +7,7 @@ class todosController {
       if (!text) {
         return res
           .status(400)
-          .json({ message: 'Text was not added or is blank' });
+          .json({ message: "Text was not added or is blank" });
       }
 
       const todo = new Todo({
@@ -17,12 +17,12 @@ class todosController {
       await todo.save();
 
       return res.status(200).json({
-        message: 'Todo has been created',
+        message: "Todo has been created",
         todo: todo,
       });
     } catch (error) {
       res.status(400).json({
-        message: 'Error while creating todo',
+        message: "Error while creating todo",
         error: error,
       });
     }
@@ -30,28 +30,28 @@ class todosController {
 
   async deleteTodo(req, res) {
     try {
-      const { todo_id } = req.body;
+      const { id } = req.body;
 
-      if (!todo_id) {
+      if (!id) {
         return res.status(400).json({
-          message: 'Todo id was not added or is blank',
+          message: "Todo id was not added or is blank",
         });
       }
 
-      const todo = await Todo.findById(todo_id);
+      const todo = await Todo.findById(id);
       if (!todo) {
         return res.status(400).json({
-          message: 'Wrong todo_id',
+          message: "Wrong id",
         });
       }
       await todo.deleteOne();
       return res.status(200).json({
-        message: 'Todo was successfully deleted!',
+        message: "Todo was successfully deleted!",
       });
     } catch (error) {
       console.log(error);
       return res.status(400).json({
-        message: 'Error while creating todo',
+        message: "Error while creating todo",
         error: error,
       });
     }
@@ -60,19 +60,19 @@ class todosController {
   async completeTodo(req, res) {
     try {
       try {
-        const { todo_id } = req.body;
+        const { id } = req.body;
 
-        if (!todo_id) {
+        if (!id) {
           return res.status(400).json({
-            message: 'Todo id was not added or is blank',
+            message: "Todo id was not added or is blank",
           });
         }
 
-        const todo = await Todo.findById(todo_id);
+        const todo = await Todo.findById(id);
 
         if (!todo) {
           return res.status(400).json({
-            message: 'Todo not found',
+            message: "Todo not found",
           });
         }
 
@@ -81,18 +81,18 @@ class todosController {
         await todo.save();
 
         return res.status(200).json({
-          message: 'Todo status updated successfully',
+          message: "Todo status updated successfully",
           todo: todo,
         });
       } catch (error) {
         console.log(error);
         return res.status(400).json({
-          message: 'Error while completing todo',
+          message: "Error while completing todo",
         });
       }
     } catch (error) {
       res.status(400).json({
-        message: 'Error while creating todo',
+        message: "Error while creating todo",
         error: error,
       });
     }
@@ -102,12 +102,12 @@ class todosController {
     try {
       const todos = await Todo.find();
       res.json({
-        message: 'All todos',
+        message: "All todos",
         todos: todos,
       });
     } catch (error) {
       res.status(400).json({
-        message: 'Error while creating todo',
+        message: "Error while creating todo",
         error: error,
       });
     }
