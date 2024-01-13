@@ -14,7 +14,11 @@ bookshelfRouter.post(
 );
 
 bookshelfRouter.delete("/deleteBook", bookshelfController.deleteBook);
-bookshelfRouter.put("/updateBook", bookshelfController.updateBook);
+bookshelfRouter.put(
+  "/updateBook",
+  upload.single("image"),
+  bookshelfController.updateBook
+);
 bookshelfRouter.get("/getBooks", bookshelfController.getBooks);
 bookshelfRouter.get("/getBook/:id", bookshelfController.getBook);
 

@@ -1,5 +1,5 @@
 import Book from "../models/Book.js";
-import { Readable } from "stream";
+import { deleteImage, uploadRequestImage } from "../service/imageService.js";
 import mongoose from "mongoose";
 
 class bookshelfController {
@@ -7,50 +7,20 @@ class bookshelfController {
     try {
       const { title, author, text, rate } = req.body;
 
-      // Check if required fields are present
-      if (!title || !author || !text) {
-        return res.status(400).json({
-          message: "Fields title, text, and author cannot be blank!",
-        });
-      }
+      //   if (!title || !author || !text) {
+      //     return res.status(400).json({
+      //       message: "Fields title, text, and author cannot be blank!",
+      //     });
+      //   }
 
-      let imageBuffer;
-
-      // Check if file is present in the request
-      if (req.file) {
-        imageBuffer = req.file.buffer;
-      }
-
-      // Create a readable stream from the image buffer
-      const readableImageStream = new Readable();
-      readableImageStream.push(imageBuffer);
-      readableImageStream.push(null);
-
-      // Store the image in GridFS
-      const bucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
-        bucketName: "images", // Set your bucket name
-      });
-
-      const uploadStream = bucket.openUploadStream("image.png", {
-        contentType: "image/png", // Set your image content type
-      });
-
-      readableImageStream.pipe(uploadStream);
-
-      // Wait for the image to be stored
-      await new Promise((resolve, reject) => {
-        uploadStream.on("finish", resolve);
-        uploadStream.on("error", reject);
-      });
-
-      const image = `/api/image/${uploadStream.id}`; // Set your image URL endpoint
+      const image = await uploadRequestImage(req.file);
 
       const book = Book({
         title,
         text,
         author,
         rate,
-        image, // Add the imageUrl to the book object
+        image,
       });
 
       await book.save();
@@ -60,10 +30,20 @@ class bookshelfController {
         book: book,
       });
     } catch (error) {
-      console.log(error);
-      res.status(400).json({
-        message: "Error while creating a book",
-        error: error,
+      if (error instanceof mongoose.Error.ValidationError) {
+        const customError = Object.values(error.errors).map((err) => {
+          return { message: err.message };
+        });
+
+        return res.status(400).json({
+          message: customError,
+        });
+      }
+
+      // Handle other types of errors here
+      console.error(error);
+      return res.status(400).json({
+        message: error.message,
       });
     }
   }
@@ -82,6 +62,10 @@ class bookshelfController {
           message: "There is no book with this id!",
         });
       }
+      if (book.image) {
+        await deleteImage(book.image);
+      }
+
       return res.status(200).json({
         message: "Book has been deleted successfully!",
       });
@@ -96,16 +80,47 @@ class bookshelfController {
 
   async updateBook(req, res) {
     try {
-      const book = req.body;
+      const { id } = req.body;
+
+      if (!id) {
+        return res.status(400).json({
+          message: "The id field can not be blank",
+        });
+      }
+
+      // Checking if book with this id exists
+      const checkBook = await Book.findById(id);
+      if (!checkBook) {
+        return res.status(400).json({
+          message: "There is no book with this id",
+        });
+      }
+
+      const update = req.body;
+
+      // If user added new image and the book already has one - we need to delete an old image
+      if (checkBook.image && req.file) {
+        await deleteImage(checkBook.image);
+      }
+
+      //Uploading new image
+      if (req.file) {
+        const image = await uploadRequestImage(req.file);
+        update.image = image;
+      }
+
+      //Updating the book with new data
       const updatedBook = await Book.findOneAndUpdate(
-        { _id: book.id },
-        { $set: book },
+        { _id: update.id },
+        { $set: update },
         { new: true, useFindAndModify: false }
       );
 
+      // If something gone wrong and book was not updated - we need to delete new image
       if (!updatedBook) {
+        await deleteImage(image);
         return res.status(404).json({
-          message: "No book found with this id",
+          message: "Error while updating a book",
         });
       }
 
@@ -116,8 +131,7 @@ class bookshelfController {
     } catch (error) {
       console.error(error);
       res.status(400).json({
-        message: "Error while updating a book",
-        error: error.message,
+        message: error.message,
       });
     }
   }
@@ -131,11 +145,11 @@ class bookshelfController {
       });
     } catch (error) {
       res.status(400).json({
-        message: "Error while creating todo",
-        error: error,
+        message: error.message,
       });
     }
   }
+
   async getBook(req, res) {
     try {
       const { id } = req.params;
@@ -151,8 +165,7 @@ class bookshelfController {
       });
     } catch (error) {
       res.status(400).json({
-        message: "Error while creating todo",
-        error: error,
+        message: error.message,
       });
     }
   }
