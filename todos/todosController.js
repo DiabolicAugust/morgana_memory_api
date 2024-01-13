@@ -1,4 +1,5 @@
 import Todo from "../models/Todo.js";
+import { errorHandlingService } from "../service/errorService.js";
 
 class todosController {
   async addTodo(req, res) {
@@ -21,10 +22,7 @@ class todosController {
         todo: todo,
       });
     } catch (error) {
-      res.status(400).json({
-        message: "Error while creating todo",
-        error: error,
-      });
+      errorHandlingService(error, res);
     }
   }
 
@@ -49,52 +47,38 @@ class todosController {
         message: "Todo was successfully deleted!",
       });
     } catch (error) {
-      console.log(error);
-      return res.status(400).json({
-        message: "Error while creating todo",
-        error: error,
-      });
+      errorHandlingService(error, res);
     }
   }
 
   async completeTodo(req, res) {
     try {
-      try {
-        const { id } = req.body;
+      const { id } = req.body;
 
-        if (!id) {
-          return res.status(400).json({
-            message: "Todo id was not added or is blank",
-          });
-        }
-
-        const todo = await Todo.findById(id);
-
-        if (!todo) {
-          return res.status(400).json({
-            message: "Todo not found",
-          });
-        }
-
-        todo.isCompleted = !todo.isCompleted;
-
-        await todo.save();
-
-        return res.status(200).json({
-          message: "Todo status updated successfully",
-          todo: todo,
-        });
-      } catch (error) {
-        console.log(error);
+      if (!id) {
         return res.status(400).json({
-          message: "Error while completing todo",
+          message: "Todo id was not added or is blank",
         });
       }
-    } catch (error) {
-      res.status(400).json({
-        message: "Error while creating todo",
-        error: error,
+
+      const todo = await Todo.findById(id);
+
+      if (!todo) {
+        return res.status(400).json({
+          message: "Todo not found",
+        });
+      }
+
+      todo.isCompleted = !todo.isCompleted;
+
+      await todo.save();
+
+      return res.status(200).json({
+        message: "Todo status updated successfully",
+        todo: todo,
       });
+    } catch (error) {
+      errorHandlingService(error, res);
     }
   }
 
@@ -106,10 +90,7 @@ class todosController {
         todos: todos,
       });
     } catch (error) {
-      res.status(400).json({
-        message: "Error while creating todo",
-        error: error,
-      });
+      errorHandlingService(error, res);
     }
   }
 }
