@@ -1,7 +1,7 @@
+import { Strings } from "../data/strings.js";
 import Book from "../models/Book.js";
 import { errorHandlingService } from "../service/errorService.js";
 import { deleteImage, uploadRequestImage } from "../service/imageService.js";
-import mongoose from "mongoose";
 
 class bookshelfController {
   async addBook(req, res) {
@@ -27,7 +27,7 @@ class bookshelfController {
       await book.save();
 
       return res.json({
-        message: "Book has been added successfully!",
+        message: Strings.requests.bookCreated,
         book: book,
       });
     } catch (error) {
@@ -40,13 +40,13 @@ class bookshelfController {
       const { id } = req.body;
       if (!id) {
         return res.status(400).json({
-          message: "Id field can not be blank!",
+          message: Strings.errors.idValidationError,
         });
       }
       const book = await Book.findByIdAndDelete(id);
       if (!book) {
         return res.status(400).json({
-          message: "There is no book with this id!",
+          message: Strings.errors.noBookById,
         });
       }
       if (book.image) {
@@ -54,7 +54,7 @@ class bookshelfController {
       }
 
       return res.status(200).json({
-        message: "Book has been deleted successfully!",
+        message: Strings.requests.bookDeleted,
       });
     } catch (error) {
       errorHandlingService(error, res);
@@ -67,7 +67,7 @@ class bookshelfController {
 
       if (!id) {
         return res.status(400).json({
-          message: "The id field can not be blank",
+          message: Strings.errors.idValidationError,
         });
       }
 
@@ -75,7 +75,7 @@ class bookshelfController {
       const checkBook = await Book.findById(id);
       if (!checkBook) {
         return res.status(400).json({
-          message: "There is no book with this id",
+          message: Strings.errors.noBookById,
         });
       }
 
@@ -103,12 +103,12 @@ class bookshelfController {
       if (!updatedBook) {
         await deleteImage(image);
         return res.status(404).json({
-          message: "Error while updating a book",
+          message: Strings.errors.bookUpdateError,
         });
       }
 
       res.status(200).json({
-        message: "Your book has been updated successfully!",
+        message: Strings.requests.bookUpdated,
         book: updatedBook,
       });
     } catch (error) {
@@ -120,7 +120,7 @@ class bookshelfController {
     try {
       const books = await Book.find();
       res.status(200).json({
-        message: "All books",
+        message: Strings.requests.allBooks,
         books: books,
       });
     } catch (error) {
@@ -135,12 +135,12 @@ class bookshelfController {
       const { id } = req.params;
       if (!id) {
         return res.status(400).json({
-          message: "The id field can not be blank!",
+          message: Strings.errors.idValidationError,
         });
       }
       const book = await Book.findById(id);
       res.status(200).json({
-        message: "Book by id",
+        message: Strings.requests.bookById,
         book: book,
       });
     } catch (error) {

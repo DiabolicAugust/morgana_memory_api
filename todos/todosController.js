@@ -1,3 +1,4 @@
+import { Strings } from "../data/strings.js";
 import Todo from "../models/Todo.js";
 import { errorHandlingService } from "../service/errorService.js";
 
@@ -8,7 +9,7 @@ class todosController {
       if (!text) {
         return res
           .status(400)
-          .json({ message: "Text was not added or is blank" });
+          .json({ message: Strings.errors.textValidationError });
       }
 
       const todo = new Todo({
@@ -18,7 +19,7 @@ class todosController {
       await todo.save();
 
       return res.status(200).json({
-        message: "Todo has been created",
+        message: Strings.requests.todoCreated,
         todo: todo,
       });
     } catch (error) {
@@ -32,19 +33,19 @@ class todosController {
 
       if (!id) {
         return res.status(400).json({
-          message: "Todo id was not added or is blank",
+          message: Strings.errors.todoIdValidationError,
         });
       }
 
       const todo = await Todo.findById(id);
       if (!todo) {
         return res.status(400).json({
-          message: "Wrong id",
+          message: Strings.errors.wrongId,
         });
       }
       await todo.deleteOne();
       return res.status(200).json({
-        message: "Todo was successfully deleted!",
+        message: Strings.requests.todoDeleted,
       });
     } catch (error) {
       errorHandlingService(error, res);
@@ -57,7 +58,7 @@ class todosController {
 
       if (!id) {
         return res.status(400).json({
-          message: "Todo id was not added or is blank",
+          message: Strings.errors.todoIdValidationError,
         });
       }
 
@@ -65,7 +66,7 @@ class todosController {
 
       if (!todo) {
         return res.status(400).json({
-          message: "Todo not found",
+          message: Strings.errors.todoNotFound,
         });
       }
 
@@ -74,7 +75,7 @@ class todosController {
       await todo.save();
 
       return res.status(200).json({
-        message: "Todo status updated successfully",
+        message: Strings.requests.todoStatusUpdated,
         todo: todo,
       });
     } catch (error) {
@@ -86,7 +87,7 @@ class todosController {
     try {
       const todos = await Todo.find();
       res.json({
-        message: "All todos",
+        message: Strings.requests.allTodos,
         todos: todos,
       });
     } catch (error) {

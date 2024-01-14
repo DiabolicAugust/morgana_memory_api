@@ -1,8 +1,9 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model } from "mongoose";
+import { Strings } from "../data/strings.js";
 
 const Note = new Schema({
-  text: { type: String, require: true },
+  text: { type: String, required: [true, Strings.errors.textValidationError] },
   dateOfCreation: { type: String, default: Date.now() },
 });
 
-export default model('Note', Note);
+export default model("Note", Note);
