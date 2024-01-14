@@ -1,0 +1,31 @@
+export const Strings = {
+  general: {
+    serverStart: "Server has started!",
+  },
+  errors: {
+    textValidationError: "Text was not added or is blank",
+    titleValidationError: "Title was not added or is blank",
+    authorValidationError: "Author was not added or is blank",
+    todoIdValidationError: "Todo id was not added or is blank",
+    idValidationError: "Id was not added or is blank",
+    rateValueError: "Rate number must be from 1 to 5",
+    todoNotFound: "Todo not found",
+    wrongId: "Wrong id",
+    titleUniqueError: "You already have a book with this title!",
+    noBookById: "There is no book with this id!",
+    bookUpdateError: "Error while updating a book",
+  },
+  requests: {
+    noteCreationSuccsessful: "Note has been created!",
+    allNotes: "All notes",
+    todoStatusUpdated: "Todo status updated successfully",
+    allTodos: "All todos",
+    todoDeleted: "Todo was successfully deleted!",
+    todoCreated: "Todo has been created",
+    bookCreated: "Book has been added successfully!",
+    bookDeleted: "Book has been deleted successfully!",
+    bookUpdated: "Your book has been updated successfully!",
+    allBooks: "All books",
+    bookById: "Book by id",
+  },
+};

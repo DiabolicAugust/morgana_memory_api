@@ -5,6 +5,7 @@ import todosRouter from "./todos/todosRouter.js";
 import bookshelfRouter from "./bookshelf/bookshelfRouter.js";
 import dotenv from "dotenv";
 import imagesRouter from "./images/imagesRouter.js";
+import { Strings } from "./data/strings.js";
 
 dotenv.config();
 const PORT = process.env.PORT || 5000;
@@ -20,7 +21,7 @@ app.use("/api/image", imagesRouter);
 const start = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URL);
-    app.listen(PORT, () => console.log("\x1b[31 m Server started! \x1b[0m"));
+    app.listen(PORT, () => console.log(Strings.general.serverStart));
   } catch (error) {
     console.log(error);
   }
