@@ -14,21 +14,37 @@ class bookshelfController {
       //     });
       //   }
 
-      const image = await uploadRequestImage(req.file);
-
       const book = Book({
         title,
         text,
         author,
         rate,
-        image,
       });
 
       await book.save();
 
+      const image = await uploadRequestImage(req.file);
+
+      const updatedBook = await Book.findOneAndUpdate(
+        { _id: book.id },
+        {
+          $set: {
+            image: image,
+          },
+        },
+        { new: true, useFindAndModify: false }
+      );
+
+      if (!updatedBook) {
+        await deleteImage(image);
+        return res.status(404).json({
+          message: Strings.errors.bookUpdateError,
+        });
+      }
+
       return res.json({
         message: Strings.requests.bookCreated,
-        book: book,
+        book: updatedBook,
       });
     } catch (error) {
       errorHandlingService(error, res);

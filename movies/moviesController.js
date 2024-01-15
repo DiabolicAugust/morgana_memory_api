@@ -14,21 +14,37 @@ class MovieshelfController {
       //     });
       //   }
 
-      const image = await uploadRequestImage(req.file);
-
       const movie = Movie({
         title,
         text,
         author,
         rate,
-        image,
       });
 
       await movie.save();
 
+      const image = await uploadRequestImage(req.file);
+
+      const updatedMovie = await Movie.findOneAndUpdate(
+        { _id: movie.id },
+        {
+          $set: {
+            image: image,
+          },
+        },
+        { new: true, useFindAndModify: false }
+      );
+
+      if (!updatedMovie) {
+        await deleteImage(image);
+        return res.status(404).json({
+          message: Strings.errors.movieUpdateError,
+        });
+      }
+
       return res.json({
         message: Strings.requests.MovieCreated,
-        movie: movie,
+        movie: updatedMovie,
       });
     } catch (error) {
       errorHandlingService(error, res);
