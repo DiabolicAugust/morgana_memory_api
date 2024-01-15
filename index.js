@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import notesRouter from "./notes/notesRouter.js";
 import todosRouter from "./todos/todosRouter.js";
 import bookshelfRouter from "./bookshelf/bookshelfRouter.js";
+import moviesRouter from "./movies/moviesRouter.js";
 import dotenv from "dotenv";
 import imagesRouter from "./images/imagesRouter.js";
 import { Strings } from "./data/strings.js";
@@ -16,6 +17,7 @@ app.use(express.json());
 app.use("/notes", notesRouter);
 app.use("/todos", todosRouter);
 app.use("/books", bookshelfRouter);
+app.use("/movies", moviesRouter);
 app.use("/api/image", imagesRouter);
 
 const start = async () => {
