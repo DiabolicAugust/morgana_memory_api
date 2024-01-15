@@ -13,7 +13,9 @@ export const Strings = {
     wrongId: "Wrong id",
     titleUniqueError: "You already have a book with this title!",
     noBookById: "There is no book with this id!",
+    noMovieById: "There is no movie with this id!",
     bookUpdateError: "Error while updating a book",
+    movieUpdateError: "Error while updating a movie",
   },
   requests: {
     noteCreationSuccsessful: "Note has been created!",
@@ -27,5 +29,10 @@ export const Strings = {
     bookUpdated: "Your book has been updated successfully!",
     allBooks: "All books",
     bookById: "Book by id",
+    movieCreated: "Movie has been added successfully!",
+    movieDeleted: "Movie has been deleted successfully!",
+    movieUpdated: "Your movie has been updated successfully!",
+    movieBooks: "All movies",
+    movieById: "Movie by id",
   },
 };
