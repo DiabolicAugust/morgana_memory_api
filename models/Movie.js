@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
 import { Strings } from "../data/strings.js";
 
-const Book = new Schema({
+const Movie = new Schema({
   title: {
     type: String,
     required: [true, Strings.errors.titleValidationError],
@@ -9,10 +9,6 @@ const Book = new Schema({
       value: true,
       message: Strings.errors.titleUniqueError,
     },
-  },
-  author: {
-    type: String,
-    required: [true, Strings.errors.authorValidationError],
   },
   rate: {
     type: Number,
@@ -23,7 +19,7 @@ const Book = new Schema({
   text: { type: String, required: [true, Strings.errors.textValidationError] },
   image: { type: String, default: "" },
   dateOfCreation: { type: String, default: Date.now() },
-  isCompleted: { type: Boolean, default: false },
+  isWatched: { type: Boolean, default: false },
 });
 
-export default model("Book", Book);
+export default model("Movie", Movie);

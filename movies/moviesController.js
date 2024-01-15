@@ -1,10 +1,10 @@
 import { Strings } from "../data/strings.js";
-import Book from "../models/Book.js";
+import Movie from "../models/Movie.js";
 import { errorHandlingService } from "../service/errorService.js";
 import { deleteImage, uploadRequestImage } from "../service/imageService.js";
 
-class bookshelfController {
-  async addBook(req, res) {
+class MovieshelfController {
+  async addMovie(req, res) {
     try {
       const { title, author, text, rate } = req.body;
 
@@ -14,19 +14,19 @@ class bookshelfController {
       //     });
       //   }
 
-      const book = Book({
+      const movie = Movie({
         title,
         text,
         author,
         rate,
       });
 
-      await book.save();
+      await movie.save();
 
       const image = await uploadRequestImage(req.file);
 
-      const updatedBook = await Book.findOneAndUpdate(
-        { _id: book.id },
+      const updatedMovie = await Movie.findOneAndUpdate(
+        { _id: movie.id },
         {
           $set: {
             image: image,
@@ -35,71 +35,71 @@ class bookshelfController {
         { new: true, useFindAndModify: false }
       );
 
-      if (!updatedBook) {
+      if (!updatedMovie) {
         await deleteImage(image);
         return res.status(404).json({
-          message: Strings.errors.bookUpdateError,
+          message: Strings.errors.movieUpdateError,
         });
       }
 
       return res.json({
-        message: Strings.requests.bookCreated,
-        book: updatedBook,
+        message: Strings.requests.MovieCreated,
+        movie: updatedMovie,
       });
     } catch (error) {
       errorHandlingService(error, res);
     }
   }
 
-  async deleteBook(req, res) {
+  async deleteMovie(req, res) {
     try {
-      const { id } = req.body;
+      const { id } = req.params;
       if (!id) {
         return res.status(400).json({
           message: Strings.errors.idValidationError,
         });
       }
-      const book = await Book.findByIdAndDelete(id);
-      if (!book) {
+      const movie = await Movie.findByIdAndDelete(id);
+      if (!movie) {
         return res.status(400).json({
-          message: Strings.errors.noBookById,
+          message: Strings.errors.noMovieById,
         });
       }
-      if (book.image) {
-        await deleteImage(book.image);
+      if (movie.image) {
+        await deleteImage(movie.image);
       }
 
       return res.status(200).json({
-        message: Strings.requests.bookDeleted,
+        message: Strings.requests.movieDeleted,
       });
     } catch (error) {
       errorHandlingService(error, res);
     }
   }
 
-  async updateBook(req, res) {
+  async updateMovie(req, res) {
     try {
       const { id } = req.body;
 
       if (!id) {
-        return res.status(400).json({
+        return res.status(404).json({
           message: Strings.errors.idValidationError,
         });
       }
 
-      // Checking if book with this id exists
-      const checkBook = await Book.findById(id);
-      if (!checkBook) {
-        return res.status(400).json({
-          message: Strings.errors.noBookById,
+      // Checking if Movie with this id exists
+      const checkMovie = await Movie.findById(id);
+      if (!checkMovie) {
+        return res.status(404).json({
+          message: Strings.errors.noMovieById,
         });
       }
 
       const update = req.body;
 
-      // If user added new image and the book already has one - we need to delete an old image
-      if (checkBook.image && req.file) {
-        await deleteImage(checkBook.image);
+      // If user added new image and the Movie already has one - we need to delete an old image
+      if (checkMovie.image && req.file) {
+        await deleteImage(checkMovie.image);
       }
 
       //Uploading new image
@@ -108,36 +108,36 @@ class bookshelfController {
         update.image = image;
       }
 
-      //Updating the book with new data
-      const updatedBook = await Book.findOneAndUpdate(
+      //Updating the Movie with new data
+      const updatedMovie = await Movie.findOneAndUpdate(
         { _id: update.id },
         { $set: update },
         { new: true, useFindAndModify: false }
       );
 
-      // If something gone wrong and book was not updated - we need to delete new image
-      if (!updatedBook) {
+      // If something gone wrong and Movie was not updated - we need to delete new image
+      if (!updatedMovie) {
         await deleteImage(image);
         return res.status(404).json({
-          message: Strings.errors.bookUpdateError,
+          message: Strings.errors.movieUpdateError,
         });
       }
 
       res.status(200).json({
-        message: Strings.requests.bookUpdated,
-        book: updatedBook,
+        message: Strings.requests.movieUpdated,
+        movie: updatedMovie,
       });
     } catch (error) {
       errorHandlingService(error, res);
     }
   }
 
-  async getBooks(req, res) {
+  async getMovies(req, res) {
     try {
-      const books = await Book.find();
+      const movies = await Movie.find();
       res.status(200).json({
-        message: Strings.requests.allBooks,
-        books: books,
+        message: Strings.requests.allMovies,
+        movies: movies,
       });
     } catch (error) {
       res.status(400).json({
@@ -146,7 +146,7 @@ class bookshelfController {
     }
   }
 
-  async getBook(req, res) {
+  async getMovie(req, res) {
     try {
       const { id } = req.params;
       if (!id) {
@@ -154,10 +154,10 @@ class bookshelfController {
           message: Strings.errors.idValidationError,
         });
       }
-      const book = await Book.findById(id);
+      const movie = await Movie.findById(id);
       res.status(200).json({
-        message: Strings.requests.bookById,
-        book: book,
+        message: Strings.requests.movieById,
+        movie: movie,
       });
     } catch (error) {
       errorHandlingService(error, res);
@@ -165,4 +165,4 @@ class bookshelfController {
   }
 }
 
-export default new bookshelfController();
+export default new MovieshelfController();
